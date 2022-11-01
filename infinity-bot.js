@@ -86,7 +86,6 @@ const ZDGConnection = async () => {
       const mobile = msg.message.conversation
       const listRespone = msg.message.listResponseMessage
       const buttonResponse = msg.message.buttonsResponseMessage
-      const welcome = ['oi','olá','e ai bb', 'boa noite', 'boa tarde', 'bom dia','e ai', 'iai', 'ta tendo oq?','tem pod?']
    
       if (!msg.key.fromMe && jid !== 'status@broadcast' && !ZDGGroupCheck(jid)) {
    
