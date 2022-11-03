@@ -50,6 +50,9 @@ const getItens = async (msg) => {
 			connection.destroy();
 		});
 	});
+    // console.log("mensagem2:",msg)        
+    // console.log("rows:",rows)        
+    // console.dir(rows) 
 	if (rows.length > 0) return rows[0].itens;
 	return false;
 }
@@ -63,8 +66,9 @@ const setItens = async (itens, msg) => {
 		connection.destroy();
 		});
 	});
-	if (rows.length > 0) return true;
-	return itens;
+          
+	if (rows.affectedRows > 0) return true;
+	return false;
 }
 
 const delItens = async (msg) => {
@@ -76,7 +80,7 @@ const delItens = async (msg) => {
 		connection.destroy();
 		});
 	});
-	if (rows.length > 0) return true;
+	if (rows.affectedRows > 0) return true;
 	return false;
 }
 
@@ -169,7 +173,7 @@ async function Connection() {
         if (!msg.key.fromMe && jid !== 'status@broadcast' && !GroupCheck(jid)) {
             sock.readMessages(jid, msg.key.participant, [msg.key.id]);
             const user = msg.key.remoteJid.replace(/\D/g, '');
-            // console.log("MENSAGEM : ", msg)
+            console.log("MENSAGEM : ", msg)
 
             //================= ÁREAS DE BUTTONS =============//
             const opcoes = [
@@ -231,7 +235,7 @@ async function Connection() {
                         {
                             title: 'Mago - R$35,00',
                             rows: [
-                                { title: 'Arctic Mango 3mg 🥭❄', description: '\nJuice de manga com um leve frescor.', rowId: 'mago' },
+                                { title: 'Arctic Mango 3mg ', description: '\nJuice de manga com um leve frescor.', rowId: 'mago' },
                                 { title: 'Cold grape 3mg 🍇❄', description: '\nJuice de uva refrescante.', rowId: 'mago' },
                                 { title: 'Artic Pine 3mg 🍇❄', description: '\nJuice de uva refrescante.', rowId: 'mago' },
                                 { title: 'Artic Mint  3mg🍃❄', description: '\nJuice de menta refrescante.', rowId: 'mago' },
@@ -380,7 +384,7 @@ async function Connection() {
                 }
                 if (buttonResponse.selectedDisplayText === 'Finalizar Pedido') { //terminar !!
                     delay(1000).then(async function() {
-                        const itens = await getItens(user);
+                        const itens = await getItens(jid);
                         
                         const pedido_finalizado = {
                             title: 'Seu pedido foi finalizado e enviado para um atendente.🛒',
@@ -410,22 +414,26 @@ async function Connection() {
         if (listResponse) {
             if (listResponse.description.includes('Juice')) {
                 delay(1000).then(async function() {
-                    const itens = await getItens(user);
-                    await setItens(itens + ', ' + msg.message.listResponseMessage.title, user);
+                    const itens = await getItens(jid);
+                    console.dir(itens)
+                    if (itens ==''){
+                        await setItens(msg.message.listResponseMessage.title, jid)
+                    }
+                    else{
+                    await setItens(itens + ',' + msg.message.listResponseMessage.title, jid)
+                    .then(result => console.log('RESULT: ', result))
+                    .catch(err => console.log('ERROR: ', err));
+                    }
                 });
                 delay(2000).then(async function() {
-                    const itens = await getItens(user);
-                    
+                    const itens = await getItens(jid);
                     const pedido = {
                         title: 'Seu pedido é até o momento:',
                         text:`*Itens*: \n➡️${itens}`,
                         footer: '© Infinity Vape 🌬️💨',
                         buttons: cart,
                     } 
-                    SendMessage(jid, pedido)
-                        .then(result => console.log('RESULT: ', result))
-                        .catch(err => console.log('ERROR: ', err));
-                    // SendMessage(jid, '*Itens do pedido*: ' + itens.replace(',',''));
+                    SendMessage(jid, pedido)                
                 });
             }
             
