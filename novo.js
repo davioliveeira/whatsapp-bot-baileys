@@ -50,9 +50,6 @@ const getItens = async (msg) => {
 			connection.destroy();
 		});
 	});
-    // console.log("mensagem2:",msg)        
-    // console.log("rows:",rows)        
-    // console.dir(rows) 
 	if (rows.length > 0) return rows[0].itens;
 	return false;
 }
@@ -159,11 +156,11 @@ async function Connection() {
         
             if (getUserFrom === false) {
               await setUser(user, nomeContato);
-              console.log('Usuário armazenado: ' + user + ' - ' + nomeContato)
+            //   console.log('Usuário armazenado: ' + user + ' - ' + nomeContato)
             }
         
             if (getUserFrom !== false) {
-              console.log('Usuário já foi armazenado')
+            //   console.log('Usuário já foi armazenado')
             }
           }
         catch(e){
@@ -182,21 +179,21 @@ async function Connection() {
                 { buttonId: 'atendente', buttonText: { displayText: 'Falar com Atendente' }, type: 1.2 },
             ];
 
-            const cart = [
-                // { buttonId: 'continua', buttonText: { displayText: 'Adicionar ao Carrinho' }, type: 1.0 },
+            const opcao_pedido = [
+                { buttonId: 'exit', buttonText: { displayText: 'Adicionar mais itens' }, type: 1.2 },
                 { buttonId: 'finaliza', buttonText: { displayText: 'Finalizar Pedido' }, type: 1.1 },
-                { buttonId: 'exit', buttonText: { displayText: 'Sair' }, type: 1.2 },
             ];
-            const btns_finaliza = [
-                { buttonId: 'continua', buttonText: { displayText: 'Continuar' }, type: 1.1 },
-                { buttonId: 'finaliza', buttonText: { displayText: 'Finalizar Pedido' }, type: 1.1 },
-                { buttonId: 'exit', buttonText: { displayText: 'Sair' }, type: 1.2 },
-            ]
-
+            const pagamento = [
+                { buttonId: 'credito', buttonText: { displayText: 'Cartão de Débito' }, type: 1.2 },
+                { buttonId: 'debito', buttonText: { displayText: 'Cartão de Crédito' }, type: 1.2 },
+                { buttonId: 'pix', buttonText: { displayText: 'Pix' }, type: 1.1 },
+            ];
+            
             const cat = [
                 { buttonId: 'juice', buttonText: { displayText: 'Juices' }, type: 1.3 },
                 { buttonId: 'salt', buttonText: { displayText: 'Salts' }, type: 1.4 },
                 { buttonId: 'pod', buttonText: { displayText: 'Pods' }, type: 1.5 },
+                { buttonId: 'exit', buttonText: { displayText: 'Sair' }, type: 1.2 }
             ];
 
             //======================================================//
@@ -235,9 +232,9 @@ async function Connection() {
                         {
                             title: 'Mago - R$35,00',
                             rows: [
-                                { title: 'Arctic Mango 3mg ', description: '\nJuice de manga com um leve frescor.', rowId: 'mago' },
+                                { title: 'Arctic Mango 3mg 🥭❄', description: '\nJuice de manga com um leve frescor.', rowId: 'mago' },
                                 { title: 'Cold grape 3mg 🍇❄', description: '\nJuice de uva refrescante.', rowId: 'mago' },
-                                { title: 'Artic Pine 3mg 🍇❄', description: '\nJuice de uva refrescante.', rowId: 'mago' },
+                                { title: 'Artic Pine 3mg 🍍❄', description: '\nJuice de uva refrescante.', rowId: 'mago' },
                                 { title: 'Artic Mint  3mg🍃❄', description: '\nJuice de menta refrescante.', rowId: 'mago' },
                                 { title: 'Ice Melons 3mg🍉🍈❄', description: '\nJuice docinho de melão e melancia.', rowId: 'mago' },
                                 { title: 'Artic Mint  6mg🍃❄', description: '\nJuice de menta refrescante.', rowId: 'mago' },
@@ -279,8 +276,6 @@ async function Connection() {
                         type:1
                     };
                     SendMessage(jid, listJuices)
-                        .then(result => console.log('RESULT: ', result))
-                        .catch(err => console.log('ERROR: ', err));
                 }
                 if (buttonResponse.selectedDisplayText === 'Salts') {
                     const sec_salts = [
@@ -368,46 +363,89 @@ async function Connection() {
                         sections: sec_pod
                     };
                     SendMessage(jid, listPod)
-                        .then(result => console.log('RESULT: ', result))
-                        .catch(err => console.log('ERROR: ', err));
                 }
-                if(buttonResponse.selectedDisplayText === 'Adicionar ao Carrinho'){ //terminar!!
+                if(buttonResponse.selectedDisplayText === 'Adicionar mais itens'){ 
                     const carrinho = {
-                                title:'*Seu carrinho 🛒*',
-                                text: `Itens:\n\n➡️${itens_pedido.toString()}`,
+                                text: '*Escolha uma Categoria:* ',
                                 footer: '© Infinity Vape 🌬️💨',
-                                buttons: btns_finaliza,
-                            };
-                            SendMessage(jid, carrinho)
-                                .then(result => console.log('RESULT: ', result))
-                                .catch(err => console.log('ERROR: ', err));
+                                buttons: cat,
+                    };
+                    SendMessage(jid, carrinho)
                 }
-                if (buttonResponse.selectedDisplayText === 'Finalizar Pedido') { //terminar !!
+                if(buttonResponse.selectedDisplayText === 'Falar com Atendente'){ 
+                    const atendente = {
+                                text: 'Ok! Aguarde alguns instantes enquanto te encaminho para um dos Atendentes Infinity.',
+                                footer: '© Infinity Vape 🌬️💨'
+                            }
+                    SendMessage(jid,atendente)
+                }
+                if (buttonResponse.selectedDisplayText === 'Finalizar Pedido') { 
+                    const formaPagamento = {
+                        text: 'Por favor informe qual é a forma de pagamento desejada: \n\n\n',
+                        footer: '© Infinity Vape 🌬️💨',
+                        buttons: pagamento,
+                        
+                    };
+                    SendMessage(jid, formaPagamento)
+                }
+                if (buttonResponse.selectedDisplayText === 'Dinheiro') { 
                     delay(1000).then(async function() {
                         const itens = await getItens(jid);
-                        
-                        const pedido_finalizado = {
-                            title: 'Seu pedido foi finalizado e enviado para um atendente.🛒',
-                            text: '\n\n*Itens do pedido*: ' + itens ,
-                            footer: '© Infinity Vape 🌬️💨',
-                        };
-                        SendMessage(jid, {text:'Seu pedido foi finalizado e enviado para um atendente.🛒\n\n\n*Itens do pedido*:\n'+itens})
-                            .then(result => console.log('RESULT: ', result))
-                            .catch(err => console.log('ERROR: ', err));
+                        const pedido = itens.replace(/,/g,'\n➡️')
+                        const num_cliente= jid.replace('@s.whatsapp.net','')
+
+                        SendMessage(jid, {text:'Seu pedido foi finalizado e enviado para um dos Atendentes Infinity.🛒\n\n*Itens do pedido*:\n➡️'+pedido+'\n\n*Forma de Pagamento:* '+buttonResponse.selectedDisplayText })
+                        SendMessage(jid, {text:'_A Infinity Vape agrade a preferência e volte sempre.😍🎉_\n\n\n_Para realizar um novo pedido basta dizer "Oi"_'})
+                        SendMessage('558588209354@s.whatsapp.net',{text:`*Um cliente acabou de finalizar o pedido.*\n*Informações do Pedido:*\n\n*Produto(s):*\n➡️${pedido}\n\n*Nome do Cliente:* ${cliente}\n*Forma de Pagamento:* ${msg.message.buttonsResponseMessage.selectedDisplayText}\n*Link:* https://wa.me/${num_cliente}\n`})    
+                        delItens(jid)
                     });
 
                 }
-                if (buttonResponse.selectedDisplayText === 'Sair') { //terminar !!
                 
-                const listPod = {
-                    text: 'Nosso Catálogo de *Pods* está logo abaixo!\n\n',
-                    buttonText: 'Ver Catálogo de Pods',
-                    footer: '© Infinity Vape 🌬️💨',
-                    sections: sec_pod
-                };
-                SendMessage(jid, listPod)
-                    .then(result => console.log('RESULT: ', result))
-                    .catch(err => console.log('ERROR: ', err));
+                if (buttonResponse.selectedDisplayText === 'Pix') { 
+                    delay(1000).then(async function() {
+                        const itens = await getItens(jid);
+                        const pedido = itens.replace(/,/g,'\n➡️')
+                        const num_cliente= jid.replace('@s.whatsapp.net','')
+
+                        SendMessage(jid, {text:'Seu pedido foi finalizado e enviado para um dos Atendentes Infinity.🛒\n\n*Itens do pedido*:\n➡️'+pedido+'\n\n*Forma de Pagamento:* '+buttonResponse.selectedDisplayText })
+                        SendMessage(jid, {text:'_A Infinity Vape agrade a preferência e volte sempre.😍🎉_\n\n\n_Para realizar um novo pedido basta dizer "Oi"_'})
+                        SendMessage('558588209354@s.whatsapp.net',{text:`*Um cliente acabou de finalizar o pedido.*\n*Informações do Pedido:*\n\n*Produto(s):*\n➡️${pedido}\n\n*Nome do Cliente:* ${cliente}\n*Forma de Pagamento:* ${msg.message.buttonsResponseMessage.selectedDisplayText}\n*Link:* https://wa.me/${num_cliente}\n`})    
+                        delItens(jid)
+                    });
+
+                }
+                
+                if (buttonResponse.selectedDisplayText === 'Cartão de Débito') { 
+                    delay(1000).then(async function() {
+                        const itens = await getItens(jid);
+                        const pedido = itens.replace(/,/g,'\n➡️')
+                        const num_cliente= jid.replace('@s.whatsapp.net','')
+
+                        SendMessage(jid, {text:'Seu pedido foi finalizado e enviado para um dos Atendentes Infinity.🛒\n\n*Itens do pedido*:\n➡️'+pedido+'\n\n*Forma de Pagamento:* '+buttonResponse.selectedDisplayText })
+                        SendMessage(jid, {text:'_A Infinity Vape agrade a preferência e volte sempre.😍🎉_\n\n\n_Para realizar um novo pedido basta dizer "Oi"_'})
+                        SendMessage('558588209354@s.whatsapp.net',{text:`*Um cliente acabou de finalizar o pedido.*\n*Informações do Pedido:*\n\n*Produto(s):*\n➡️${pedido}\n\n*Nome do Cliente:* ${cliente}\n*Forma de Pagamento:* ${msg.message.buttonsResponseMessage.selectedDisplayText}\n*Link:* https://wa.me/${num_cliente}\n`})    
+                        delItens(jid)
+                    });
+                }
+                if (buttonResponse.selectedDisplayText === 'Cartão de Crédito') { 
+                    delay(1000).then(async function() {
+                        const itens = await getItens(jid);
+                        const pedido = itens.replace(/,/g,'\n➡️')
+                        const num_cliente= jid.replace('@s.whatsapp.net','')
+
+                        SendMessage(jid, {text:'Seu pedido foi finalizado e enviado para um dos Atendentes Infinity.🛒\n\n*Itens do pedido*:\n➡️'+pedido+'\n\n*Forma de Pagamento:* '+buttonResponse.selectedDisplayText })
+                        SendMessage(jid, {text:'_A Infinity Vape agrade a preferência e volte sempre.😍🎉_\n\n\n_Para realizar um novo pedido basta dizer "Oi"_'})
+                        SendMessage('558588209354@s.whatsapp.net',{text:`*Um cliente acabou de finalizar o pedido.*\n*Informações do Pedido:*\n\n*Produto(s):*\n➡️${pedido}\n\n*Nome do Cliente:* ${cliente}\n*Forma de Pagamento: *${msg.message.buttonsResponseMessage.selectedDisplayText}\n*Link:* https://wa.me/${num_cliente}\n`})    
+                        delItens(jid)
+                    });
+                }
+
+                if (buttonResponse.selectedDisplayText === 'Sair') {
+                    const encerrar = {
+                        text: 'A Infinity Vape agradece seu contato e até Breve.😊❤️',
+                    }
+                    SendMessage(jid, encerrar)
                 }
 
         }
@@ -420,45 +458,64 @@ async function Connection() {
                         await setItens(msg.message.listResponseMessage.title, jid)
                     }
                     else{
-                    await setItens(itens + ',' + msg.message.listResponseMessage.title, jid)
-                    .then(result => console.log('RESULT: ', result))
-                    .catch(err => console.log('ERROR: ', err));
+                        await setItens(itens + '\n➡️' + msg.message.listResponseMessage.title, jid)
                     }
                 });
                 delay(2000).then(async function() {
                     const itens = await getItens(jid);
                     const pedido = {
                         title: 'Seu pedido é até o momento:',
-                        text:`*Itens*: \n➡️${itens}`,
+                        text:`Seu pedido é até o momento:\n\n*Itens*: \n➡️${itens}`,
                         footer: '© Infinity Vape 🌬️💨',
-                        buttons: cart,
+                        buttons: opcao_pedido,
                     } 
                     SendMessage(jid, pedido)                
                 });
             }
             
             if (listResponse.description.includes('Nicksalt')) {
-                const pedido_provisorio = {
-                    title: 'Seu pedido é até o momento:',
-                    text:`Item: \n➡️${listResponse.title}`,
-                    footer: '© Infinity Vape 🌬️💨',
-                    buttons: cart,
-                } 
-                SendMessage(jid, pedido_provisorio)
-                    .then(result => console.log('RESULT: ', result))
-                    .catch(err => console.log('ERROR: ', err));
+                delay(1000).then(async function() {
+                    const itens = await getItens(jid);
+                    console.dir(itens)
+                    if (itens ==''){
+                        await setItens(msg.message.listResponseMessage.title, jid)
+                    }
+                    else{
+                        await setItens(itens + '\n➡️' + msg.message.listResponseMessage.title, jid)
+                    }
+                })
+                delay(2000).then(async function() {
+                    const itens = await getItens(jid);
+                    const pedido = {
+                        title: 'Seu pedido é até o momento:',
+                        text:`Seu pedido é até o momento:\n\n*Itens*: \n➡️${itens}`,
+                        footer: '© Infinity Vape 🌬️💨',
+                        buttons: opcao_pedido,
+                    } 
+                    SendMessage(jid, pedido)                
+                })
             }
             if (listResponse.description.includes('Pod')) {
-                const pedido_provisorio = {
-                    title: 'Seu pedido é até o momento:',
-                    text:`Item: \n➡️${listResponse.title}`,
-                    footer: '© Infinity Vape 🌬️💨',
-                    buttons: cart,
-                    headerType: 1
-                } 
-                SendMessage(jid, pedido_provisorio)
-                    .then(result => console.log('RESULT: ', result))
-                    .catch(err => console.log('ERROR: ', err));
+                delay(1000).then(async function() {
+                    const itens = await getItens(jid);
+                    console.dir(itens)
+                    if (itens ==''){
+                        await setItens(msg.message.listResponseMessage.title, jid)
+                    }
+                    else{
+                        await setItens(itens + '\n➡️' + msg.message.listResponseMessage.title, jid)
+                    }
+                })
+                delay(2000).then(async function() {
+                    const itens = await getItens(jid);
+                    const pedido = {
+                        title: 'Seu pedido é até o momento:',
+                        text:`Seu pedido é até o momento:\n\n*Itens*: \n➡️${itens}`,
+                        footer: '© Infinity Vape 🌬️💨',
+                        buttons: opcao_pedido,
+                    } 
+                    SendMessage(jid, pedido)                
+                })
             }
         }
     }
