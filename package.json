@@ -8,9 +8,8 @@
     "url": "https://github.com/pedroherpeto/botzdg-baileys.git"
   },
   "scripts": {
-    "start": "node botzdglistbutton.js",
-    "app": "node ./botzdglistbutton.js",
-    "test": "nodemon ./botzdglistbutton.js"
+    "start": "node vex.js",
+    "build": "nodemon novo.js"
   },
   "dependencies": {
     "@adiwajshing/baileys": "github:adiwajshing/baileys",
