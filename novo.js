@@ -5,13 +5,17 @@ const P = require('pino');
 const fs = require('fs');
 const mysql = require('mysql2/promise');
 
-
+function delay(t, v) {
+    return new Promise(function(resolve) { 
+        setTimeout(resolve.bind(null, v), t)
+    });
+  }
 const createConnection = async () => {
     return await mysql.createConnection({
         host: 'localhost',
         user: 'root',
         password: '',
-        database: 'vex'
+        database: 'bot-delivery'
     });
 }
 
@@ -40,6 +44,20 @@ const setUser = async (msg, nome) => {
     if (rows.length > 0) return rows[0].user;
     return false;
 }
+// Captura Sanduiches
+const getSanduiche = async () => {
+	const connection = await createConnection();
+	const [rows] = await connection.execute('SELECT title, description FROM sanduiche');
+  delay(1000).then(async function() {
+		await connection.end();
+		delay(500).then(async function() {
+			connection.destroy();
+		});
+	});
+    if (rows.length > 0) return rows[0].itens;
+    return false;
+}
+
 
 const getItens = async (msg) => {
     const connection = await createConnection();
