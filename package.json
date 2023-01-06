@@ -9,14 +9,12 @@
   },
   "scripts": {
     "start": "node vex.js",
-    "build": "nodemon novo.js"
+    "build": "nodemon vex.js"
   },
   "dependencies": {
     "@adiwajshing/baileys": "github:adiwajshing/baileys",
     "@adiwajshing/keyed-db": "^0.2.4",
-    "@google-cloud/dialogflow": "^4.7.0",
     "actions-on-google": "^2.4.1",
-    "dialogflow-fulfillment": "^0.6.1",
     "express": "^4.17.3",
     "express-validator": "^6.14.0",
     "mysql2": "^2.3.3",

@@ -24,8 +24,8 @@ const ZDGGroupCheck = (jid) => {
    return regexp.test(jid)
 }
 
-const ZDGUpdate = (ZDGsock) => {
-   ZDGsock.on('connection.update', ({ connection, lastDisconnect, qr }) => {
+const ZDGUpdate = (sock) => {
+   sock.on('connection.update', ({ connection, lastDisconnect, qr }) => {
       if (qr){
          console.log('© BOT-ZDG - Qrcode: ', qr);
       };
