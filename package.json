@@ -1,11 +1,11 @@
 {
-  "name": "botzdg-baileys",
-  "version": "1.0.0",
+  "name": "auto-atendimento-pastelaria",
+  "version": "0.1.0",
   "main": "initializer.js",
   "license": "ISC",
   "author": {
-    "name": "Pedrinho da Nasa",
-    "url": "https://github.com/pedroherpeto/botzdg-baileys.git"
+    "name": "Davi O.",
+    "url": "https://github.com/davioliveeira"
   },
   "scripts": {
     "start": "node vex.js",
@@ -14,7 +14,6 @@
   "dependencies": {
     "@adiwajshing/baileys": "github:adiwajshing/baileys",
     "@adiwajshing/keyed-db": "^0.2.4",
-    "actions-on-google": "^2.4.1",
     "express": "^4.17.3",
     "express-validator": "^6.14.0",
     "mysql2": "^2.3.3",

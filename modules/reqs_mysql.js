@@ -1,14 +1,10 @@
-const createConnection = async () => {
-    return await mysql.createConnection({
-        host: 'localhost',
-        user: 'root',
-        password: '',
-        database: 'test'
-    });
-}
-const getUser = async (msg) => {
+
+
+
+
+const getUser = async (msgfom) => {
     const connection = await createConnection();
-    const [rows] = await connection.execute('SELECT user FROM pedido WHERE user = ?', [msg]);
+    const [rows] = await connection.execute('SELECT user FROM pastelaria WHERE user = ?', [msgfom]);
     delay(1000).then(async function () {
         await connection.end();
         delay(500).then(async function () {
@@ -18,9 +14,10 @@ const getUser = async (msg) => {
     if (rows.length > 0) return true;
     return false;
 }
-const setUser = async (msg, nome) => {
+
+const setUser = async (msgfom, nome) => {
     const connection = await createConnection();
-    const [rows] = await connection.execute('INSERT INTO `pedido` (`id`, `user`, `nome`, `local`, `pessoas`,`dataEvento`,`pacote`) VALUES (NULL, ?, ?, "", "","","")', [msg, nome]);
+    const [rows] = await connection.execute('INSERT INTO `pastelaria` (`id`, `user`, `nome`, `itens`, `pagamento`, `localizacao`,  `total`) VALUES (NULL, ?, ?, "", 0, 0, 0)', [msgfom, nome]);
     delay(1000).then(async function () {
         await connection.end();
         delay(500).then(async function () {
@@ -30,162 +27,24 @@ const setUser = async (msg, nome) => {
     if (rows.length > 0) return rows[0].user;
     return false;
 }
-// GROUP PESSOAS 
-const getPessoas = async (msg) => {
-    const connection = await createConnection();
-    const [rows] = await connection.execute('SELECT pessoas FROM pedido WHERE user = ?', [msg]);
-    delay(1000).then(async function () {
-        await connection.end();
-        delay(500).then(async function () {
-            connection.destroy();
-        });
-    });
-    if (rows.length > 0) return rows[0].pessoas;
-    return false;
-}
-const setPessoas = async (pessoas, msg) => {
-    const connection = await createConnection();
-    const [rows] = await connection.execute('UPDATE pedido SET pessoas = ? WHERE pedido.user = ?;', [pessoas, msg]);
-    delay(1000).then(async function () {
-        await connection.end();
-        delay(500).then(async function () {
-            connection.destroy();
-        });
-    });
 
-    if (rows.affectedRows > 0) return true;
-    return false;
-}
-const delPessoas = async (msg) => {
+const getPastel = async () => {
     const connection = await createConnection();
-    const [rows] = await connection.execute('UPDATE pedido SET pessoas = "" WHERE pedido.user = ?;', [msg]);
+    const [rows] = await connection.execute('SELECT title, description FROM pastel');
     delay(1000).then(async function () {
         await connection.end();
         delay(500).then(async function () {
             connection.destroy();
         });
     });
-    if (rows.affectedRows > 0) return true;
+    if (rows.length > 0) return rows;
     return false;
 }
-//GROUP DATA
-const getdata = async (msg) =>{
-    const connection = await createConnection();
-    const [rows] = await connection.execute('SELECT dataEvento FROM pedido WHERE user = ?', [msg]);
-    delay(1000).then(async function () {
-         await connection.end();
-         delay(500).then(async function () {
-             connection.destroy();
-         });
-     });
-     if (rows.length > 0) return rows[0].dataEvento;
-     return false;   
-}
-const setData = async (data, msg) => {
-    const connection = await createConnection();
-    const [rows] = await connection.execute('UPDATE pedido SET dataEvento = ? WHERE pedido.user = ?;', [data, msg]);
-    delay(1000).then(async function () {
-        await connection.end();
-        delay(500).then(async function () {
-            connection.destroy();
-        });
-    });
 
-    if (rows.affectedRows > 0) return true;
-    return false;
-}
-const delData = async (msg) => {
+/////////////////////////////////////////////////
+const setTipo = async (tipo, msgfom) => {
     const connection = await createConnection();
-    const [rows] = await connection.execute('UPDATE pedido SET dataEvento = "" WHERE pedido.user = ?;', [msg]);
-    delay(1000).then(async function () {
-        await connection.end();
-        delay(500).then(async function () {
-            connection.destroy();
-        });
-    });
-    if (rows.affectedRows > 0) return true;
-    return false;
-}
-// GROUP LOCAL 
-const getLocal = async (msg) =>{
-    const connection = await createConnection();
-    const [rows] = await connection.execute('SELECT local FROM pedido WHERE user = ?', [msg]);
-    delay(1000).then(async function () {
-         await connection.end();
-         delay(500).then(async function () {
-             connection.destroy();
-         });
-     });
-     if (rows.length > 0) return rows[0].local;
-     return false;   
-}
-const setLocal = async (local, msg) => {
-    const connection = await createConnection();
-    const [rows] = await connection.execute('UPDATE pedido SET local = ? WHERE pedido.user = ?;', [local, msg]);
-    delay(1000).then(async function () {
-        await connection.end();
-        delay(500).then(async function () {
-            connection.destroy();
-        });
-    });
-
-    if (rows.affectedRows > 0) return true;
-    return false;
-}
-const delLocal = async (msg) => {
-    const connection = await createConnection();
-    const [rows] = await connection.execute('UPDATE pedido SET local = "" WHERE pedido.user = ?;', [msg]);
-    delay(1000).then(async function () {
-        await connection.end();
-        delay(500).then(async function () {
-            connection.destroy();
-        });
-    });
-    if (rows.affectedRows > 0) return true;
-    return false;
-}
-// GROUP PACOTE
-const getPacote = async (msg) =>{
-    const connection = await createConnection();
-    const [rows] = await connection.execute('SELECT pacote FROM pedido WHERE user = ?', [msg]);
-    delay(1000).then(async function () {
-         await connection.end();
-         delay(500).then(async function () {
-             connection.destroy();
-         });
-     });
-     if (rows.length > 0) return rows[0].pacote;
-     return false;   
-}
-const setPacote = async (pacote, msg) => {
-    const connection = await createConnection();
-    const [rows] = await connection.execute('UPDATE pedido SET local = ? WHERE pedido.user = ?;', [pacote, msg]);
-    delay(1000).then(async function () {
-        await connection.end();
-        delay(500).then(async function () {
-            connection.destroy();
-        });
-    });
-
-    if (rows.affectedRows > 0) return true;
-    return false;
-}
-const delPacote = async (msg) => {
-    const connection = await createConnection();
-    const [rows] = await connection.execute('UPDATE pedido SET pacote = "" WHERE pedido.user = ?;', [msg]);
-    delay(1000).then(async function () {
-        await connection.end();
-        delay(500).then(async function () {
-            connection.destroy();
-        });
-    });
-    if (rows.affectedRows > 0) return true;
-    return false;
-}
-//DELETA TUDO!
-const delAll = async (msg) => {
-    const connection = await createConnection();
-    const [rows] = await connection.execute('UPDATE pedido SET dataEvento= "", local= "", pacote= "", pessoas = "" WHERE pedido.user = ?;', [msg]);
+    const [rows] = await connection.execute('UPDATE pastelaria SET tipo_pastel = ? WHERE pastelaria.user = ?;', [tipo, msgfom]);
     delay(1000).then(async function () {
         await connection.end();
         delay(500).then(async function () {
@@ -196,11 +55,318 @@ const delAll = async (msg) => {
     return false;
 }
 
-export { createConnection,
-    getUser,setUser,
-    getLocal,setLocal,delLocal,
-    getPessoas,setPessoas,delPessoas,
-    getPacote,setPacote,delPacote,
-    getdata,setData,delData,
-    delAll
+const getTipo = async (msgfom) => {
+    const connection = await createConnection();
+    const [rows] = await connection.execute('SELECT tipo_pastel FROM pastelaria WHERE user = ?', [msgfom]);
+    delay(1000).then(async function () {
+        await connection.end();
+        delay(500).then(async function () {
+            connection.destroy();
+        });
+    });
+    if (rows.length > 0) return rows[0].tipo_pastel;
+    return false;
+}
+const delTipo = async (msgfom) => {
+    const connection = await createConnection();
+    const [rows] = await connection.execute('UPDATE pastelaria SET tipo_pastel = "" WHERE pastelaria.user = ?;', [msgfom]);
+    delay(1000).then(async function () {
+        await connection.end();
+        delay(500).then(async function () {
+            connection.destroy();
+        });
+    });
+    if (rows.length > 0) return true;
+    return false;
+}
+//////////////////////////////////////////////////////
+/////////////////////////////////////////////////
+const setOpcao = async (opcao, msgfom) => {
+    const connection = await createConnection();
+    const [rows] = await connection.execute('UPDATE pastelaria SET opcao_sabores = ? WHERE pastelaria.user = ?;', [opcao, msgfom]);
+    delay(1000).then(async function () {
+        await connection.end();
+        delay(500).then(async function () {
+            connection.destroy();
+        });
+    });
+    if (rows.affectedRows > 0) return true;
+    return false;
+}
+
+const getOpcao = async (msgfom) => {
+    const connection = await createConnection();
+    const [rows] = await connection.execute('SELECT opcao_sabores FROM pastelaria WHERE user = ?', [msgfom]);
+    delay(1000).then(async function () {
+        await connection.end();
+        delay(500).then(async function () {
+            connection.destroy();
+        });
+    });
+    if (rows.length > 0) return rows[0].opcao_sabores;
+    return false;
+}
+const delOpcao = async (msgfom) => {
+    const connection = await createConnection();
+    const [rows] = await connection.execute('UPDATE pastelaria SET opcao_sabores = "" WHERE pastelaria.user = ?;', [msgfom]);
+    delay(1000).then(async function () {
+        await connection.end();
+        delay(500).then(async function () {
+            connection.destroy();
+        });
+    });
+    if (rows.length > 0) return true;
+    return false;
+}
+//////////////////////////////////////////////////////
+const set_tipo_pastel = async (total, msgfom) => {
+    const connection = await createConnection();
+    const [rows] = await connection.execute('UPDATE tipo_pastel SET title = ? WHERE pastelaria.user = ?;', [total, msgfom]);
+    delay(1000).then(async function () {
+        await connection.end();
+        delay(500).then(async function () {
+            connection.destroy();
+        });
+    });
+    if (rows.affectedRows > 0) return true;
+    return false;
+}
+
+const get_tipo_pastel = async (msgfom) => {
+    const connection = await createConnection();
+    const [rows] = await connection.execute('SELECT title, description FROM tipo_pastel');
+    delay(1000).then(async function () {
+        await connection.end();
+        delay(500).then(async function () {
+            connection.destroy();
+        });
+    });
+    if (rows.length > 0) return rows;
+    return false;
+}
+
+const getBebida = async (msgfom) => {
+    const connection = await createConnection();
+    const [rows] = await connection.execute('SELECT title, description FROM bebidas');
+    delay(1000).then(async function () {
+        await connection.end();
+        delay(500).then(async function () {
+            connection.destroy();
+        });
+    });
+    if (rows.length > 0) return rows;
+    return false;
+}
+
+
+const getFormaPagamento = async (msgfom) => {
+    const connection = await createConnection();
+    const [rows] = await connection.execute('SELECT title, description FROM forma_pagamento');
+    delay(1000).then(async function () {
+        await connection.end();
+        delay(500).then(async function () {
+            connection.destroy();
+        });
+    });
+    if (rows.length > 0) return rows;
+    return false;
+}
+
+const getTotal = async (msgfom) => {
+    const connection = await createConnection();
+    const [rows] = await connection.execute('SELECT total FROM pastelaria WHERE user = ?', [msgfom]);
+    delay(1000).then(async function () {
+        await connection.end();
+        delay(500).then(async function () {
+            connection.destroy();
+        });
+    });
+    if (rows.length > 0) return rows[0].total;
+    return false;
+}
+
+const setTotal = async (total, msgfom) => {
+    const connection = await createConnection();
+    const [rows] = await connection.execute('UPDATE pastelaria SET total = ? WHERE pastelaria.user = ?;', [total, msgfom]);
+    delay(1000).then(async function () {
+        await connection.end();
+        delay(500).then(async function () {
+            connection.destroy();
+        });
+    });
+    if (rows.affectedRows > 0) return true;
+    return false;
+}
+
+const delTotal = async (msgfom) => {
+    const connection = await createConnection();
+    const [rows] = await connection.execute('UPDATE pastelaria SET total = 0 WHERE pastelaria.user = ?;', [msgfom]);
+    delay(1000).then(async function () {
+        await connection.end();
+        delay(500).then(async function () {
+            connection.destroy();
+        });
+    });
+    if (rows.length > 0) return true;
+    return false;
+}
+
+const getItens = async (msgfom) => {
+    const connection = await createConnection();
+    const [rows] = await connection.execute('SELECT itens FROM pastelaria WHERE user = ?', [msgfom]);
+    delay(1000).then(async function () {
+        await connection.end();
+        delay(500).then(async function () {
+            connection.destroy();
+        });
+    });
+    if (rows.length > 0) return rows[0].itens;
+    return false;
+}
+
+const setItens = async (itens, msgfom) => {
+    const connection = await createConnection();
+    const [rows] = await connection.execute('UPDATE pastelaria SET itens = ? WHERE pastelaria.user = ?;', [itens, msgfom]);
+    delay(1000).then(async function () {
+        await connection.end();
+        delay(500).then(async function () {
+            connection.destroy();
+        });
+    });
+    if (rows.affectedRows > 0) return true;
+    return false;
+}
+
+const delItens = async (msgfom) => {
+    const connection = await createConnection();
+    const [rows] = await connection.execute('UPDATE pastelaria SET itens = "" WHERE pastelaria.user = ?;', [msgfom]);
+    delay(1000).then(async function () {
+        await connection.end();
+        delay(500).then(async function () {
+            connection.destroy();
+        });
+    });
+    if (rows.length > 0) return true;
+    return false;
+}
+
+const getPagamento = async (msgfom) => {
+    const connection = await createConnection();
+    const [rows] = await connection.execute('SELECT forma_pagamento FROM pastelaria WHERE user = ?', [msgfom]);
+    delay(1000).then(async function () {
+        await connection.end();
+        delay(500).then(async function () {
+            connection.destroy();
+        });
+    });
+    if (rows.length > 0) return rows[0].forma_pagamento;
+    return false;
+}
+
+const setPagamento = async (pagamento, msgfom) => {
+    const connection = await createConnection();
+    const [rows] = await connection.execute('UPDATE pastelaria SET forma_pagamento = ? WHERE pastelaria.user = ?;', [pagamento, msgfom]);
+    delay(1000).then(async function () {
+        await connection.end();
+        delay(500).then(async function () {
+            connection.destroy();
+        });
+    });
+    if (rows.affectedRows > 0) return true;
+    return false;
+}
+
+const delPagamento = async (msgfom) => {
+    const connection = await createConnection();
+    const [rows] = await connection.execute('UPDATE pastelaria SET forma_pagamento = "" WHERE pastelaria.user = ?;', [msgfom]);
+    delay(1000).then(async function () {
+        await connection.end();
+        delay(500).then(async function () {
+            connection.destroy();
+        });
+    });
+    if (rows.length > 0) return true;
+    return false;
+}
+
+const setLocalizacao = async (localizacao, msgfom) => {
+    const connection = await createConnection();
+    const [rows] = await connection.execute('UPDATE pastelaria SET localizacao = ? WHERE pastelaria.user = ?;', [localizacao, msgfom]);
+    delay(1000).then(async function () {
+        await connection.end();
+        delay(500).then(async function () {
+            connection.destroy();
+        });
+    });
+    if (rows.affectedRows > 0) return true;
+    return false;
+}
+
+const delLocalizacao = async (msgfom) => {
+    const connection = await createConnection();
+    const [rows] = await connection.execute('UPDATE pastelaria SET localizacao = "" WHERE pastelaria.user = ?;', [msgfom]);
+    delay(1000).then(async function () {
+        await connection.end();
+        delay(500).then(async function () {
+            connection.destroy();
+        });
+    });
+    if (rows.length > 0) return true;
+    return false;
+}
+
+const getLocalizacao = async (msgfom) => {
+    const connection = await createConnection();
+    const [rows] = await connection.execute('SELECT localizacao FROM pastelaria WHERE user = ?', [msgfom]);
+    delay(1000).then(async function () {
+        await connection.end();
+        delay(500).then(async function () {
+            connection.destroy();
+        });
+    });
+    if (rows.length > 0) return rows[0].localizacao;
+    return false;
+}
+
+const setPedido = async (msgfom, nome, itens, pagamento, localizacao, total) => {
+    const connection = await createConnection();
+    const [rows] = await connection.execute('INSERT INTO `pastelaria_full` (`id`, `user`, `nome`, `itens`, `forma_pagamento`, `localizacao`,  `total`) VALUES (NULL, ?, ?, ?, ?, ?, ?)', [msgfom, nome, itens, pagamento, localizacao, total]);
+    delay(1000).then(async function () {
+        await connection.end();
+        delay(500).then(async function () {
+            connection.destroy();
+        });
+    });
+    if (rows.affectedRows > 0) return rows[0].user;
+    return false;
+}
+
+module.export = {
+    getUser,
+    setUser,
+    getPastel,
+    setTipo,
+    getTipo,
+    delTipo,
+    setOpcao,
+    getOpcao,
+    delOpcao,
+    set_tipo_pastel,
+    get_tipo_pastel,
+    getBebida,
+    getFormaPagamento,
+    getTotal,
+    setTotal,
+    delTotal,
+    getItens,
+    setItens,
+    delItens,
+    getPagamento,
+    setPagamento,
+    delPagamento,
+    setLocalizacao,
+    delLocalizacao,
+    getLocalizacao,
+    setPedido,
+    delAll,
 }

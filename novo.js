@@ -337,8 +337,6 @@ async function Connection() {
                             ]
                         }
                     ]
-                
-
                 const listSalt = {
                     text: 'Nosso Catálogo de *Salts* está logo abaixo!\n\n*PROMOÇÃO IMPERDÍVEL NOS SALTS 🤑🏃‍♂️💨*\n\n3 unidades de qualquer marca por R$90,00 😱😱\n\n*CORRE! APROVEITA ESSA PROMOÇÃO!🏃‍♂️💨 *\n_Válida até dia 15/11/22_ ',
                     buttonText: 'Ver Catálogo de Salts',
@@ -570,6 +568,5 @@ async function Connection() {
     }
   });
 }
-
 
 Connection()

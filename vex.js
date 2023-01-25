@@ -290,7 +290,7 @@ async function Connection() {
             console.log('Não foi possível armazenar o usuário' + e)
         }
 
-        if (!msg.key.fromMe && jid !== 'status@broadcast' && !GroupCheck(jid) && !msg.message.audioMessage) {
+        if (!msg.key.fromMe && jid !== 'status@broadcast' && !GroupCheck(jid) ) {
             sock.readMessages(jid, msg.key.participant, [msg.key.id]);
             console.log("MENSAGEM : ", msg)
             //================= ÁREAS DE BUTTONS =============//
@@ -300,8 +300,8 @@ async function Connection() {
             
             // TRATANDO RESPONSES TEXTS
             if(msg.message.conversation ){
-                if(msg.message.conversation === 'oi' || 'ola' || 'olá'){
-                // if (msg.message.conversation.toLocaleLowerCase() === 'oi' ||msg.message.conversation.toLowerCase() === 'olá' ||msg.message.conversation.toLowerCase() === 'boa noite' ||msg.message.conversation.toLowerCase() === 'bom dia' ||msg.message.conversation.toLowerCase().includes('boa tarde')||msg.message.conversation.toLowerCase().includes('ei') ||msg.message.conversation.toLowerCase() === 'ola'  && msg.message.conversation.toLowerCase() !== "data:") {
+                
+                if (msg.message.conversation.toLocaleLowerCase() === 'oi' ||msg.message.conversation.toLowerCase() === 'olá' ||msg.message.conversation.toLowerCase() === 'boa noite' ||msg.message.conversation.toLowerCase() === 'bom dia' ||msg.message.conversation.toLowerCase().includes('boa tarde')||msg.message.conversation.toLowerCase().includes('ei') ||msg.message.conversation.toLowerCase() === 'ola'  && msg.message.conversation.toLowerCase() !== "data:" && msg.message.conversation.toLowerCase() !== "end:") {
                         const btn_boasvindas = {
                             text: `Olá, *${cliente}* seja bem-vindo!\n\nAqui é o Merlin 🧙🏻‍♂️🤖, atendente virtual do Mago dos Drinks🍸!  Para poder te atender da melhor forma, por favor selecione uma das opções abaixo:`,
                             footer: '© Mago Dos Drinks 🧙🏼‍♂️🍹',
@@ -310,24 +310,47 @@ async function Connection() {
                         };
                         await SendMessage(jid, btn_boasvindas)
                     }
-                if(msg.message.conversation.toLocaleLowerCase().includes('data:')){ // endereço: Avenida. Carai                    
-                        const fullData = msg.message.conversation.split(':')
+                
+                if(msg.message.conversation.toLocaleLowerCase().includes('data') || !msg.message.conversation.toLocaleLowerCase().includes('end')|| !msg.message.conversation.toLocaleLowerCase().includes('endereço')){
+                    try {
+                        if(msg.message.conversation.toLocaleLowerCase().includes('data:')){
+                            const fullData = msg.message.conversation.split(':')
+                            const data = fullData[1]
+                            delay(500).then(async function(){
+                                await setData(data,jid)
+                                console.dir(' : Setando...',setData)
+                            })
+                            delay(2000).then(async function () {
+                                const pacoteEvento = [
+                                    {
+                                        title: 'PACOTES DISPONÍVEIS',
+                                        rows: [
+                                            {title: 'Pacote - Basic',},
+                                            {title: 'Pacote - Basic + CHOPP',},
+                                            {title: 'Pacote - Medium',},
+                                            {title: 'Pacote - Medium + CHOPP',},
+                                            {title: 'Pacote - Premium',},
+                                            {title: 'Pacote - Premium + CHOPP',},
+                                            {title: 'Pacote - Chopp',},
+                                        ]
+                                    }
+                                ]
+                                const pacote = {
+                                    text:'Por fim, clique no link abaixo e verifique os nossos *Pacotes*.\n\n👉🏻https://bit.ly/PacotesMago\n\n_*Obs.:* Após verificar o link basta clicar em escolher o pacote desejado.🧙🏼‍♂️🍹_',
+                                    buttonText: 'CLIQUE AQUI PARA ESCOLHER',
+                                    footer: '© Mago Dos Drinks 🧙🏼‍♂️🍹',
+                                    sections: pacoteEvento
+                                }
+                                SendMessage(jid,pacote)
+                            })
+                        }
+                        if(msg.message.conversation.toLocaleLowerCase().includes('data ')){
+                        const fullData = msg.message.conversation.split(' ')
                         const data = fullData[1]
                         delay(500).then(async function(){
                             await setData(data,jid)
-                            console.dir(setData)
+                            console.dir(' esp Setando...',setData)
                         })
-                        delay(1000).then(async function(){
-                            const qntPessoas = await getPessoas(jid)
-                            const localEvento = await getLocal(jid)
-                            const pacote = await getPacote(jid)
-                            const dataEvento = await getdata(jid)
-                            const progress = {
-                                text: `*INFORMAÇÕES DO SEU EVENTO:*\n➡️Quantidade de Convidados:\n${qntPessoas}\n➡️Local do Evento:\n${localEvento}\n➡️Data do Evento:\n${dataEvento}\n➡️Pacote:\n${pacote}`, 
-                            }
-                        await SendMessage(jid,progress)    
-                        });
-                        
                         delay(2000).then(async function () {
                             const pacoteEvento = [
                                 {
@@ -344,38 +367,52 @@ async function Connection() {
                                 }
                             ]
                             const pacote = {
-                                text:'Por fim, clique no link abaixo e verifique os nossos *Pacotes*.\n\n👉🏻https://tinyurl.com/mago-dos-drinks-pacotes\n\n_*Obs.:* Após verificar o link basta clicar em escolher o pacote desejado.🧙🏼‍♂️🍹_',
+                                text:'Por fim, clique no link abaixo e verifique os nossos *Pacotes*.\n\n👉🏻https://bit.ly/PacotesMago\n\n_*Obs.:* Após verificar o link basta clicar em escolher o pacote desejado.🧙🏼‍♂️🍹_',
                                 buttonText: 'CLIQUE AQUI PARA ESCOLHER',
                                 footer: '© Mago Dos Drinks 🧙🏼‍♂️🍹',
                                 sections: pacoteEvento
                             }
                             SendMessage(jid,pacote)
                         })
-                        
+                        }
+                    } catch (e) {
+                        SendMessage(jid,{text: 'Não entendi, por favor envie conforme o exemplo!'})
                     }
-                if(msg.message.conversation.toLocaleLowerCase().includes('end:')){
+
+
+                        
+                }
+            
+                if(msg.message.conversation.toLocaleLowerCase().includes('end')){
+                    if(msg.message.conversation.toLocaleLowerCase().includes('end:') || msg.message.conversation.toLocaleLowerCase().includes('endereço:') || msg.message.conversation.toLocaleLowerCase().includes('endereco:') ){
                         const fullEndereço = msg.message.conversation.split(':')
                         const endereço = fullEndereço[1]
                         delay(500).then(async function(){
                             await setLocal(endereço,jid)
                             console.dir(setLocal)
                         })
-                        delay(1000).then(async function(){
-                            const qntPessoas = await getPessoas(jid)
-                            const localEvento = await getLocal(jid)
-                            const pacote = await getPacote(jid)
-                            const dataEvento = await getdata(jid)
-                            const progress = {
-                                text: `*INFORMAÇÕES DO SEU EVENTO:*\n➡️Quantidade de Convidados:\n${qntPessoas}\n➡️Local do Evento:\n${localEvento}\n➡️Data do Evento:\n${dataEvento}\n➡️Pacote:\n${pacote}`, 
-                            }
-                            await SendMessage(jid,progress)    
-                        });
                         delay(2000).then(async function () {
                             const local = {
-                                text:'Estamos quase lá, informe a *Data* na qual será realizado seu Evento.\n(Ex: " *Data:* 23/03/2023")\n\n_Obs.: Por favor siga o modelo informado no exemplo, colocando antes "*Data:*".🧙🏼‍♂️🍹_'
+                                text:'Estamos quase lá, informe a *Data* na qual será realizado seu Evento.\n(Ex: *Data:* 23/03/2023 )\n\n_Obs.: Por favor siga o modelo informado no exemplo, colocando antes a palavra Data: ".🧙🏼‍♂️🍹_'
                             }
                             await SendMessage(jid,local)
                         })
+                    }
+                    if(msg.message.conversation.toLocaleLowerCase().includes('end ') || msg.message.conversation.toLocaleLowerCase().includes('endereço ') || msg.message.conversation.toLocaleLowerCase().includes('endereco ') ){
+                        const fullEndereço = msg.message.conversation.split('0')
+                        const endereço = fullEndereço[1]
+                        delay(500).then(async function(){
+                            await setLocal(endereço,jid)
+                            console.dir(setLocal)
+                        })
+                        delay(2000).then(async function () {
+                            const local = {
+                                text:'Estamos quase lá, informe a *Data* na qual será realizado seu Evento.\n(Ex: *Data:* 23/03/2023 )\n\n_Obs.: Por favor siga o modelo informado no exemplo, colocando antes a palavra Data: ".🧙🏼‍♂️🍹_'
+                            }
+                            await SendMessage(jid,local)
+                        })
+                    }
+                        
 
                     }
         }
@@ -441,16 +478,16 @@ async function Connection() {
                                const qntPessoas = await setPessoas(msg.message.listResponseMessage.title,jid)
                                console.dir(qntPessoas) 
                             });
-                            delay(2000).then(async function(){
-                                const qntPessoas = await getPessoas(jid)
-                                const localEvento = await getLocal(jid)
-                                const pacote = await getPacote(jid)
-                                const dataEvento = await getdata(jid)
-                                const progress = {
-                                    text: `*INFORMAÇÕES DO SEU EVENTO:*\n➡️Quantidade de Convidados:\n${qntPessoas}\n➡️Local do Evento:\n${localEvento}\n➡️Data do Evento:\n${dataEvento}\n➡️Pacote:\n${pacote}`, 
-                                }
-                            await SendMessage(jid,progress)    
-                            });
+                            // delay(2000).then(async function(){
+                            //     const qntPessoas = await getPessoas(jid)
+                            //     const localEvento = await getLocal(jid)
+                            //     const pacote = await getPacote(jid)
+                            //     const dataEvento = await getdata(jid)
+                            //     const progress = {
+                            //         text: `*INFORMAÇÕES DO SEU EVENTO:*\n➡️Quantidade de Convidados:\n${qntPessoas}\n➡️Local do Evento:\n${localEvento}\n➡️Data do Evento:\n${dataEvento}\n➡️Pacote:\n${pacote}`, 
+                            //     }
+                            // await SendMessage(jid,progress)    
+                            // });
                             delay(1000).then(async function(){
                             const location = {
                                 text: 'Agora informe o *Local* onde será realizado seu Evento.\n(Ex: *End:* Avenida Paraíso, 1441 - Espaço Gil )\n\n_*Obs*.: Para enviar a localização do seu evento, por favor siga o modelo do exemplo colocando antes a palavra *End:* ._🧙🏻‍♂️🍹'
@@ -481,8 +518,9 @@ async function Connection() {
             }
             
             
-            
-            }
+                
+        }
+        
         }
    
 )}
